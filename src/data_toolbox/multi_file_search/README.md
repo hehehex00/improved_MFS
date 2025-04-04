@@ -34,8 +34,10 @@ Regular expressions are powerful because they can match groups of characters.
 For example  `\d+` will return all numbers `0` to `9`.
 This is useful if you are searching for patterns of text and not exact strings.
 
-
-### Key Components
+### Additional Notes
+1. Document Search Utilities
+Purpose: Search through text documents line-by-line using multiprocessing.
+Key Components
     •	Global Variables: Store search parameters (_worker_doc_*) for multiprocessing workers
     •	init_document_worker(): Initializes worker processes with search parameters
     •	process_document_chunk():
