@@ -35,7 +35,7 @@ For example  `\d+` will return all numbers `0` to `9`.
 This is useful if you are searching for patterns of text and not exact strings.
 
 ### Additional Notes
-1. Document Search Utilities\n
+1. Document Search Utilities
 Purpose: Search through text documents line-by-line using multiprocessing.
 Key Components
     •	Global Variables: Store search parameters (_worker_doc_*) for multiprocessing workers
