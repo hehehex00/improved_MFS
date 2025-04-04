@@ -1,1 +1,0 @@
-chmod -x src/data_toolbox/mongrel/mongrel.py src/data_toolbox/mongrel/__init__.py src/tool_dictionary.py 

@@ -1,1 +1,0 @@
-from .application_layout import embed_in_application_layout

@@ -1,4 +1,0 @@
-elasticsearch
-alembic
-uvicorn
-fastapi
