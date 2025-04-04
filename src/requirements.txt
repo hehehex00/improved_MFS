@@ -1,0 +1,109 @@
+file:data_toolbox/utils/skopeutils-0.1.5.tar.gz
+# file detective, doc compare
+PyPDF2==3.0.1
+# Doc Compare
+python-docx==1.1.2
+#diarization, text_extractor, file_detective, file_slicer, file_lister,
+#image_coordinate_viewer, image_to_text, image_triage, jsonify, log_viewer,
+#multi_file_search, file_router, point_finder , seed_phrase_finder,
+#components, tag_manager, wallter_finder, word_freq_viz_tool
+pandas==2.2.3
+# data_illuminator, file_slicer, strings_finder, tab_translator
+openpyxl==3.1.5
+# diarization
+ffmpeg-python==0.2.0
+# all
+extra-streamlit-components==0.1.71
+streamlit-antd-components==0.3.2
+streamlit-extras==0.5.0
+streamlit==1.33.0
+# streamlit-js-eval==0.1.7
+streamlit-js-eval==0.1.7
+# Analytics
+google-cloud-firestore==2.14.0
+# image_to_text, image_triage, qr_code_decoder
+opencv-python-headless==4.9.0.80
+# all
+streamlit_feedback==0.1.3
+streamlit_folium==0.16.0
+# file_detective, doc_compare, image_to_text, image_triage, string_utils
+beautifulsoup4==4.12.2
+# cure
+python-calamine==0.2.0
+# phonenumbers==8.13.35
+streamlit_tags==1.2.8
+# cem_search, arab_dialect_id, text_extractor, diarization, image_to_text, image_triage,
+transformers==4.35.2
+# image_triage, image_to_text
+sentencepiece==0.2.0
+# image_triage
+scikit_image==0.22.0
+# all
+python-dotenv==1.0.1
+# cem_search
+distinctipy==1.3.4
+# cem_search, text_extractor
+matplotlib==3.8.4
+# walltet_finder, seed_phrase_finder, utils, common.
+XlsxWriter==3.1.9
+# word_freq_viz_tool
+langdetect==1.0.9
+# image_triage
+umap_learn==0.5.4 # imported as 'umap'
+# point_finder
+geopandas==0.14.3
+# image_to_text (API), admin_panel, cure, cem_search, tab_translator
+requests==2.31.0
+# unit tests
+typing<=3.10.0.0
+# doc_compare, utils, string_utils, word_freq_viz_tool
+textract==1.5.0
+# diarization
+whisperx==3.3.1
+# point_finder, image_coordinate_viewer
+folium<=0.15.0
+# docr, image_to-Text, image_triage, image_coordinate_viewer, qr_code_decoder
+Pillow==10.2.0
+# cemsearch, word_freq_viz_tool
+plotly==5.18.0
+# multi_file_search
+chardet==5.2.0
+# cem_search,dataminer, doc_compare, text_extractor, log_viewer, components, point_finder, image_coordinate_viewer, hijri_calendar_converter, strings_finder, analytics
+DateTime==5.3
+# multi_file_search, utils
+docx2txt==0.8
+# image_triage
+scipy==1.11.4
+# phone_normalizer, text_extractor, image_triage, log_viewer, point_finder, qr_code_decoder
+numpy==1.26.2
+# emoji_tool
+emoji==2.10.1
+# hijri_calendar_converter
+julian==0.14
+#doc_compare, file_detective, image_triage, image_to_text, multi_file_search, utils
+pypdf==4.0.2
+# text_extractor, image_to_text, imagE_triage, diarization, cem_search, arab_dialect_id
+torch==2.6.0
+#text_extractor, image_to_text, image_triage
+tqdm>=4.66.1
+# text_extractor, image_triage, image_to_text
+stqdm==0.0.5
+# diarization, text_extractor, image_triage, components, tag_manager
+uuid==1.30
+# all
+thefuzz==0.22.1 # used for fuzzy search on user input
+# image_to_text
+easyOCR==1.7.1
+#file_detective
+PyMuPDF>=1.24.2
+selenium>=4.20.0
+pytest>=8.2.0
+#Doc Compare
+odfdo==3.7.12
+#Cure
+rich==13.7.1
+aiofiles==24.1.0
+#CEM Search
+pycryptodome>=3.20.0
+# smbprotocol[kerberos]==1.14.0
+streamlit_cookies_controller

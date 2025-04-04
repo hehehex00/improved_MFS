@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  python_app:
+    build: .
+    container_name: MSF2
+    volumes:
+      - ./src:/datatoolbox  # Mount the src directory so changes to files are reflected in the container
+    command: streamlit run main.py  # Command to run the Python script
+    environment:
+      - PYTHONUNBUFFERED=1  # To ensure logs are output immediately
+    ports:
+      - "8501:8501"  # Expose port if your app uses a web server (adjust as needed)
