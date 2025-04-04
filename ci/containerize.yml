@@ -1,0 +1,282 @@
+
+# A developer creating a tag should trigger the following pipeline
+# to create a docker container and push it to the gitlab container registry.
+# In the GUI: Deploy -> Container Registry -> Streamlit-1.0
+.default-dockerize:
+  stage: containerize
+  variables:
+    GODEBUG: "http2client=0"
+    PIPELINE: "true"
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint:
+     - ''
+  script:
+    # If commit tag exists, create and push the docker container.
+    # otherwise just build the container to check for errors.
+    # Need compressed-caching=false so that job doesn't fail with memory errors.
+    - >
+      if [[ -n "${CI_COMMIT_TAG}" ]]; then
+      echo "Deploying to Tagged Registry"
+      echo "The Commit Tag is ${CI_COMMIT_TAG}"
+        /kaniko/executor \
+          --context "${CI_PROJECT_DIR}/${CONTEXT}" \
+          --dockerfile "${CI_PROJECT_DIR}/${DOCKERFILE}" \
+          --build-arg "TOOL_NAME=${TOOL_NAME}"\
+          --build-arg "PIPELINE=${PIPELINE}"\
+          --destination "${CI_REGISTRY_IMAGE}:${IMAGE_NAME}-${CI_COMMIT_TAG}" \
+          --single-snapshot \
+          --compressed-caching=false \
+          --cleanup
+      elif [[ -n "${CI_COMMIT_REF_NAME}" ]]; then
+        echo "Deploying to Branch Registry"
+        echo "The Branch Name is ${CI_COMMIT_REF_NAME}"
+        /kaniko/executor \
+          --context "${CI_PROJECT_DIR}/${CONTEXT}" \
+          --dockerfile "${CI_PROJECT_DIR}/${DOCKERFILE}" \
+          --build-arg "PIPELINE=${PIPELINE}"\
+          --build-arg "TOOL_NAME=${TOOL_NAME}"\
+          --destination "${CI_REGISTRY_IMAGE}:${IMAGE_NAME}-${CI_COMMIT_REF_NAME}" \
+          --compressed-caching=false \
+          --single-snapshot \
+          --cleanup
+      else
+        echo "Not Deploying Image"
+        /kaniko/executor \
+          --context "${CI_PROJECT_DIR}/${CONTEXT}" \
+          --build-arg "PIPELINE=${PIPELINE}"\
+          --dockerfile "${CI_PROJECT_DIR}/${DOCKERFILE}" \
+          --build-arg "TOOL_NAME=${TOOL_NAME}"\
+          --single-snapshot \
+          --compressed-caching=false \
+          --no-push
+      fi
+
+dockerize_datatoolbox_main:
+  extends: .default-dockerize
+  variables:
+    CONTEXT: .
+    DOCKERFILE: Dockerfile
+    IMAGE_NAME: datatoolbox
+  rules:
+    - if: $CI_COMMIT_REF_NAME != $CI_DEFAULT_BRANCH
+      changes:
+        paths:
+          - src/requirements.txt
+      when: never
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_REF_NAME != $CI_DEFAULT_BRANCH
+      changes:
+        paths:
+          - src/**/*
+
+dockerize_datatoolbox_branch:
+  extends: .default-dockerize
+  variables:
+    CONTEXT: .
+    DOCKERFILE: Dockerfile
+    IMAGE_NAME: datatoolbox
+  rules:
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+      changes:
+        paths:
+          - src/requirements.txt
+    - when: never
+
+dockerize_diarization_main:
+  extends: .default-dockerize
+  variables:
+    CONTEXT: src/
+    DOCKERFILE: src/data_toolbox/diarization/Dockerfile
+    IMAGE_NAME: diarization
+    TOOL_NAME: diarization
+  rules:
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+      changes:
+        paths:
+          - src/data_toolbox/diarization/requirements.txt
+          - src/data_toolbox/diarization/scripts/_diarization_cache_models.py
+    - changes:
+        paths:
+          - src/data_toolbox/diarization/**/*
+
+dockerize_diarization_api_main:
+  extends: .default-dockerize
+  variables:
+    CONTEXT: src/
+    DOCKERFILE: src/data_toolbox/diarization/api/Dockerfile
+    IMAGE_NAME: diarization_api
+    TOOL_NAME: diarization_api
+  rules:
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+      changes:
+        paths:
+          - src/data_toolbox/diarization/api/requirements.txt
+          - src/data_toolbox/diarization/scripts/_diarization_cache_models.py
+    - changes:
+        paths:
+          - src/data_toolbox/diarization/**/*
+
+dockerize_text_extractor_main:
+  extends: .default-dockerize
+  variables:
+    CONTEXT: src/
+    DOCKERFILE: src/data_toolbox/text_extractor/Dockerfile
+    IMAGE_NAME: text_extractor
+    TOOL_NAME: text_extractor
+  rules:
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+      changes:
+        paths:
+          - src/data_toolbox/text_extractor/requirements.txt
+          - src/data_toolbox/text_extractor/scripts/_text_extractor_cache_models.py
+    - changes:
+        paths:
+          - src/data_toolbox/text_extractor/**/*
+
+dockerize_arab_dialect_id_main:
+  extends: .default-dockerize
+  variables:
+    CONTEXT: src/
+    DOCKERFILE: src/data_toolbox/arab_dialect_id/Dockerfile
+    IMAGE_NAME: arab_dialect_id
+    TOOL_NAME: arab_dialect_id
+  rules:
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+      changes:
+        paths:
+          - src/data_toolbox/arab_dialect_id/requirements.txt
+          - src/data_toolbox/arab_dialect_id/scripts/_arab_dialect_id_cache_models.py
+    - changes:
+        paths:
+          - src/data_toolbox/arab_dialect_id/**/*
+
+dockerize_image_to_text_main:
+  extends: .default-dockerize
+  variables:
+    CONTEXT: src/
+    DOCKERFILE: src/data_toolbox/image_to_text/Dockerfile
+    IMAGE_NAME: image_to_text
+    TOOL_NAME: image_to_text
+  rules:
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+      changes:
+        paths:
+          - src/data_toolbox/image_to_text/requirements.txt
+          - src/data_toolbox/image_to_text/scripts/_image_to_text_cache_models.py
+    - changes:
+        paths:
+          - src/data_toolbox/image_to_text/**/*
+
+dockerize_cem_search_main:
+  extends: .default-dockerize
+  variables:
+    CONTEXT: src/
+    DOCKERFILE: src/data_toolbox/cem_search/Dockerfile
+    IMAGE_NAME: cem_search
+    TOOL_NAME: cem_search
+  rules:
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+      changes:
+        paths:
+          - src/data_toolbox/cem_search/requirements.txt
+    - changes:
+        paths:
+          - src/data_toolbox/cem_search/**/*
+
+dockerize_cem_search_api_main:
+  extends: .default-dockerize
+  variables:
+    CONTEXT: src/
+    DOCKERFILE: src/data_toolbox/cem_search/api/Dockerfile
+    IMAGE_NAME: cem_search_api
+    TOOL_NAME: cem_search_api
+  rules:
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+      changes:
+        paths:
+          - src/data_toolbox/cem_search/api/requirements.txt
+    - changes:
+        paths:
+          - src/data_toolbox/cure/**/*
+
+dockerize_image_triage_main:
+  extends: .default-dockerize
+  variables:
+    CONTEXT: src/
+    DOCKERFILE: src/data_toolbox/image_triage/Dockerfile
+    IMAGE_NAME: image_triage
+    TOOL_NAME: image_triage
+  rules:
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+      changes:
+        paths:
+          - src/data_toolbox/image_triage/requirements.txt
+          - src/data_toolbox/image_triage/scripts/_image_triage_cache_models.py
+    - changes:
+        paths:
+          - src/data_toolbox/image_triage/**/*
+
+dockerize_cure_main:
+  extends: .default-dockerize
+  variables:
+    CONTEXT: src/
+    DOCKERFILE: src/data_toolbox/cure/Dockerfile
+    IMAGE_NAME: cure
+    TOOL_NAME: cure
+  rules:
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+      changes:
+        paths:
+          - src/data_toolbox/cure/requirements.txt
+    - changes:
+        paths:
+          - src/data_toolbox/cure/**/*
+
+dockerize_cure_api_main:
+  extends: .default-dockerize
+  variables:
+    CONTEXT: src/
+    DOCKERFILE: src/data_toolbox/cure/api/Dockerfile
+    IMAGE_NAME: cure_api
+    TOOL_NAME: cure_api
+  rules:
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+      changes:
+        paths:
+          - src/data_toolbox/cure/api/requirements.txt
+    - changes:
+        paths:
+          - src/data_toolbox/cure/**/*
+
+dockerize_hijri_calendar_converter_main:
+  extends: .default-dockerize
+  variables:
+    CONTEXT: src/
+    DOCKERFILE: src/data_toolbox/hijri_calendar_converter/Dockerfile
+    IMAGE_NAME: hijri_calendar_converter
+    TOOL_NAME: hijri_calendar_converter
+  rules:
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+      changes:
+        paths:
+          - src/data_toolbox/hijri_calendar_converter/requirements.txt
+    - changes:
+        paths:
+          - src/data_toolbox/hijri_calendar_converter/**/*
+
+dockerize_hijri_calendar_converter_api_main:
+  extends: .default-dockerize
+  variables:
+    CONTEXT: src/
+    DOCKERFILE: src/data_toolbox/hijri_calendar_converter/api/Dockerfile
+    IMAGE_NAME: hijri_calendar_converter_api
+    TOOL_NAME: hijri_calendar_converter_api
+  rules:
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+      changes:
+        paths:
+          - src/data_toolbox/hijri_calendar_converter/api/requirements.txt
+    - changes:
+        paths:
+          - src/data_toolbox/hijri_calendar_converter/**/*

@@ -1,0 +1,21 @@
+# Run tests on entire repo, requiring superset of requirements.txt
+pytest-main:
+  stage: test
+  needs: []
+  image: registry.wildfireworkspace.com/eop/streamlit-1.0/default-base:latest
+  cache:
+    key: 
+      files:
+        - src/requirements.txt
+    paths:
+      - .cache/pip/
+    policy: pull-push
+  before_script:
+    - python3 -m pip config set global.cache-dir "${CI_PROJECT_DIR}/.cache/pip"
+  script:
+    - cd src
+    - python3 -m pip install -r ./requirements.txt 1>/dev/null
+    - python3 -m pip install pytest 1>/dev/null
+    - pytest -vv -W ignore::DeprecationWarning .
+  rules:
+    - when: always

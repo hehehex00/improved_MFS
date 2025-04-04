@@ -1,0 +1,19 @@
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+include:
+  - local: 'ci/lint.yml'
+  - local: 'ci/containerize.yml'
+  - local: 'ci/container_scanning.yml'
+  - local: 'ci/test.yml'
+  # - local: 'cd/deploy.yml'
+  - template: Jobs/Container-Scanning.gitlab-ci.yml
+
+stages:
+  - lint
+  - test
+  - containerize
+  - scan
+  # - deploy

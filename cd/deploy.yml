@@ -1,0 +1,55 @@
+.deploy-base:
+  stage: deploy
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
+deploy:
+  extends: .deploy-base
+  script:
+    # Only rebuild services that were built in containerize step
+    - |
+      if [[ $(git diff --name-only $CI_COMMIT_BEFORE_SHA $CI_COMMIT_SHA | grep "src/data_toolbox/diarization/") ]]; then
+        docker compose build diarization
+        docker tag datatoolbox_diarization:latest ${CI_REGISTRY_IMAGE}/diarization:latest
+        docker push ${CI_REGISTRY_IMAGE}/diarization:latest
+      fi
+
+    - |
+      if [[ $(git diff --name-only $CI_COMMIT_BEFORE_SHA $CI_COMMIT_SHA | grep "src/data_toolbox/text_extractor/") ]]; then
+        docker compose build text_extractor
+        docker tag datatoolbox_text_extractor:latest ${CI_REGISTRY_IMAGE}/text_extractor:latest
+        docker push ${CI_REGISTRY_IMAGE}/text_extractor:latest
+      fi
+
+    - |
+      if [[ $(git diff --name-only $CI_COMMIT_BEFORE_SHA $CI_COMMIT_SHA | grep "src/data_toolbox/image_to_text/") ]]; then
+        docker compose build image_to_text
+        docker tag datatoolbox_image_to_text:latest ${CI_REGISTRY_IMAGE}/image_to_text:latest
+        docker push ${CI_REGISTRY_IMAGE}/image_to_text:latest
+      fi
+
+    - |
+      if [[ $(git diff --name-only $CI_COMMIT_BEFORE_SHA $CI_COMMIT_SHA | grep "src/data_toolbox/arab_dialect_id/") ]]; then
+        docker compose build arab_dialect_id
+        docker tag datatoolbox_arab_dialect_id:latest ${CI_REGISTRY_IMAGE}/arab_dialect_id:latest
+        docker push ${CI_REGISTRY_IMAGE}/arab_dialect_id:latest
+      fi
+
+    - |
+      if [[ $(git diff --name-only $CI_COMMIT_BEFORE_SHA $CI_COMMIT_SHA | grep "src/data_toolbox/cem_search/") ]]; then
+        docker compose build cem_search
+        docker tag datatoolbox_cem_search:latest ${CI_REGISTRY_IMAGE}/cem_search:latest
+        docker push ${CI_REGISTRY_IMAGE}/cem_search:latest
+      fi
+
+    - |
+      if [[ $(git diff --name-only $CI_COMMIT_BEFORE_SHA $CI_COMMIT_SHA | grep "src/data_toolbox/image_triage/") ]]; then
+        docker compose build image_triage
+        docker tag datatoolbox_image_triage:latest ${CI_REGISTRY_IMAGE}/image_triage:latest
+        docker push ${CI_REGISTRY_IMAGE}/image_triage:latest
+      fi
+  rules:
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH

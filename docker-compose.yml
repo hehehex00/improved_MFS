@@ -1,0 +1,34 @@
+# The command: "docker compose up" will reference this file to build
+# the DataToolbox container.
+---
+networks:
+  nginx-network:
+    external: false
+services:
+##################################################
+  toolbox:
+    environment:
+      - SL_ANALYTICS_PATH=/var/log/datatoolbox/toolbox_analytics.json
+      - kc_logging=enabled
+    env_file:
+      - environment/common.env
+      - environment/${TARGET_NETWORK}-net.env
+      - environment/tools/toolbox.env
+    image: datatoolbox-v1.3.0
+    container_name: datatoolbox
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: prod
+    ports:
+      - ":8501"
+    networks:
+      - nginx-network
+    volumes:
+      - toolbox-log:/var/log/datatoolbox
+      - feedback-data:/datatoolbox/feedback_data
+  ##################################################
+volumes:
+  feedback-data:
+  toolbox-log:
